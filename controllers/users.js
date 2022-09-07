@@ -28,7 +28,9 @@ module.exports.getUser = (req, res) => {
         res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
       }
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
+    .catch(() => {
+      res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+    });
 };
 
 module.exports.updateProfile = (req, res) => {
