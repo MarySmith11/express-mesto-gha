@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Card = require('../models/card');
 
 module.exports.createCard = (req, res) => {
@@ -21,6 +22,11 @@ module.exports.sendCardsData = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
+    res.status(404).send({ message: 'Карточка с таким id не найдена' });
+    return;
+  }
+
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (card !== null) {
@@ -29,10 +35,15 @@ module.exports.deleteCard = (req, res) => {
         res.status(404).send({ message: 'Карточка с таким id не найдена' });
       }
     })
-    .catch(() => res.status(404).send({ message: 'Карточка с таким id не найдена' }));
+    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.likeCard = (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
+    res.status(404).send({ message: 'Карточка с таким id не найдена' });
+    return;
+  }
+
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (card !== null) {
@@ -41,10 +52,15 @@ module.exports.likeCard = (req, res) => {
         res.status(404).send({ message: 'Карточка с таким id не найдена' });
       }
     })
-    .catch(() => res.status(404).send({ message: 'Карточка с таким id не найдена' }));
+    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.dislikeCard = (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
+    res.status(404).send({ message: 'Карточка с таким id не найдена' });
+    return;
+  }
+
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (card !== null) {
@@ -53,5 +69,5 @@ module.exports.dislikeCard = (req, res) => {
         res.status(404).send({ message: 'Карточка с таким id не найдена' });
       }
     })
-    .catch(() => res.status(404).send({ message: 'Карточка с таким id не найдена' }));
+    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 };
