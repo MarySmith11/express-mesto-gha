@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
+const { BAD_REQUEST_ERROR, NOT_FOUND_ERROR, INTERNAL_SERVER_ERROR } = require('../constants');
 
 module.exports.createCard = (req, res) => {
   const owner = req.user._id;
@@ -8,9 +9,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные для создания карточки' });
+        res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные для создания карточки' });
       } else {
-        res.status(500).send({ message: 'Ошибка на сервере' });
+        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });
       }
     });
 };
@@ -18,12 +19,12 @@ module.exports.createCard = (req, res) => {
 module.exports.sendCardsData = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.deleteCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    res.status(400).send({ message: 'Передан некорректный ID' });
+    res.status(BAD_REQUEST_ERROR).send({ message: 'Передан некорректный ID' });
     return;
   }
 
@@ -32,15 +33,15 @@ module.exports.deleteCard = (req, res) => {
       if (card !== null) {
         res.send({ data: card });
       } else {
-        res.status(404).send({ message: 'Карточка с таким id не найдена' });
+        res.status(NOT_FOUND_ERROR).send({ message: 'Карточка с таким id не найдена' });
       }
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.likeCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    res.status(400).send({ message: 'Передан некорректный ID' });
+    res.status(BAD_REQUEST_ERROR).send({ message: 'Передан некорректный ID' });
     return;
   }
 
@@ -49,15 +50,15 @@ module.exports.likeCard = (req, res) => {
       if (card !== null) {
         res.send({ data: card });
       } else {
-        res.status(404).send({ message: 'Карточка с таким id не найдена' });
+        res.status(NOT_FOUND_ERROR).send({ message: 'Карточка с таким id не найдена' });
       }
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.dislikeCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    res.status(400).send({ message: 'Передан некорректный ID' });
+    res.status(BAD_REQUEST_ERROR).send({ message: 'Передан некорректный ID' });
     return;
   }
 
@@ -66,8 +67,8 @@ module.exports.dislikeCard = (req, res) => {
       if (card !== null) {
         res.send({ data: card });
       } else {
-        res.status(404).send({ message: 'Карточка с таким id не найдена' });
+        res.status(NOT_FOUND_ERROR).send({ message: 'Карточка с таким id не найдена' });
       }
     })
-    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' }));
 };
