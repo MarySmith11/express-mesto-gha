@@ -23,7 +23,7 @@ module.exports.sendCardsData = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    res.status(404).send({ message: 'Карточка с таким id не найдена' });
+    res.status(400).send({ message: 'Передан некорректный ID' });
     return;
   }
 
@@ -40,7 +40,7 @@ module.exports.deleteCard = (req, res) => {
 
 module.exports.likeCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    res.status(404).send({ message: 'Карточка с таким id не найдена' });
+    res.status(400).send({ message: 'Передан некорректный ID' });
     return;
   }
 
@@ -57,7 +57,7 @@ module.exports.likeCard = (req, res) => {
 
 module.exports.dislikeCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    res.status(404).send({ message: 'Карточка с таким id не найдена' });
+    res.status(400).send({ message: 'Передан некорректный ID' });
     return;
   }
 

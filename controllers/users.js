@@ -22,7 +22,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
-    res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+    res.status(400).send({ message: 'Передан некорректный ID' });
     return;
   }
 
