@@ -1,18 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const authRouter = require('./routes/auth');
 
 const NotFoundError = require('./errors/not-found-err');
 const { auth } = require('./middlewares/auth');
-const {
-  login, createUser,
-} = require('./controllers/users');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -27,21 +24,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), login);
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2),
-    about: Joi.string().min(2),
-    avatar: Joi.string().uri(),
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), createUser);
+
+app.use(authRouter);
 
 app.use(auth);
 
@@ -60,6 +44,7 @@ app.use((err, req, res, next) => {
   } else {
     res.status(err.statusCode).send({ message: err.message });
   }
+  next();
 });
 
 app.listen(PORT);
