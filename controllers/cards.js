@@ -4,6 +4,7 @@ const Card = require('../models/card');
 const BadRequestError = require('../errors/bad-request-err');
 const InternalServerError = require('../errors/internal-server-err');
 const NotFoundError = require('../errors/not-found-err');
+const BadAccessError = require('../errors/bad-access-err');
 
 module.exports.createCard = (req, res, next) => {
   const owner = req.user._id;
@@ -27,7 +28,7 @@ module.exports.sendCardsData = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findOneAndRemove({ _id: req.params.cardId, owner: req.user._id })
-    .orFail(new NotFoundError('Карточка с таким id не найдена'))
+    .orFail(new BadAccessError('Карточка с таким id не найдена'))
     .then((card) => {
       res.send({ data: card });
     })
