@@ -27,10 +27,14 @@ module.exports.sendCardsData = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findOneAndRemove({ _id: req.params.cardId, owner: req.user._id })
-    .orFail(new BadAccessError('Карточка с таким id не найдена'))
+  Card.findOneAndRemove({ _id: req.params.cardId })
+    .orFail(new NotFoundError('Карточка с таким id не найдена'))
     .then((card) => {
-      res.send({ data: card });
+      if (card.owner !== req.user._id) {
+        next(new BadAccessError('Карточка принадлежит другому пользователю'));
+      } else {
+        res.send({ data: card });
+      }
     })
     .catch(next);
 };
