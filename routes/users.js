@@ -18,11 +18,11 @@ userRouter.patch('/users/me/avatar', celebrate({
   }),
 }), updateAvatar);
 
-userRouter.get('/users/:id', getUser, celebrate({
+userRouter.get('/users/:id', celebrate({
   params: Joi.object().keys({
     id: Joi.string().required().hex().length(24),
   }),
-}));
+}), getUser);
 userRouter.get('/users', getUsers);
 
 module.exports = userRouter;
