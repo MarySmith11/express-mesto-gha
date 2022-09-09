@@ -113,7 +113,5 @@ module.exports.login = (req, res, next) => {
       })
         .send({ token });
     })
-    .catch((err) => {
-      next(new UnauthorizedError(err.message));
-    });
+    .catch(next);
 };

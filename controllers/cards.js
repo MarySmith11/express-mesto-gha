@@ -26,17 +26,16 @@ module.exports.sendCardsData = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.deleteCard = (req, res, next) => {
-  Card.findOneAndRemove({ _id: req.params.cardId })
-    .orFail(new NotFoundError('Карточка с таким id не найдена'))
-    .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
-        next(new BadAccessError('Карточка принадлежит другому пользователю'));
-      } else {
-        res.send({ data: card });
-      }
-    })
-    .catch(next);
+module.exports.deleteCard = async (req, res, next) => {
+  const card = await Card.findById(req.params.cardId).catch(next);
+  if (!card) {
+    next(new NotFoundError('Карточка с таким id не найдена'));
+  } else if (card.owner.toString() !== req.user._id) {
+    next(new BadAccessError('Карточка принадлежит другому пользователю'));
+  } else {
+    await card.remove().catch(next);
+    res.send({ data: card });
+  }
 };
 
 module.exports.likeCard = (req, res, next) => {
